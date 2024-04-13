@@ -115,6 +115,5 @@ fun ResourcesScreen(navController: NavController, texts: String,
                 Text("Сохранить")
             }
         }
-
     }
 }
