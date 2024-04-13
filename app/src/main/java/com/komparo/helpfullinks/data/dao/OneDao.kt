@@ -9,18 +9,18 @@ import com.komparo.helpfullinks.data.model.One
 
 @Dao
 interface OneDao {
-    @Query("SELECT * FROM one")
-    suspend fun getAll(): List<One>
+    @Query("SELECT * FROM One WHERE id = :id")
+     fun getTitle(id : Int): One?
 
     @Query("DELETE FROM one")
-    suspend fun deleteAll()
+    fun deleteAll()
 
     @Insert
-    suspend fun insertOne(one : One)
+     fun insertOne(one : One)
 
     @Delete
-    suspend fun deleteOne(one : One)
+     fun deleteOne(one : One)
 
     @Update
-    suspend fun updateOne(one : One)
+     fun updateOne(one : One)
 }

@@ -71,7 +71,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation ("androidx.compose.runtime:runtime:1.6.5")
 
-
     //Compose navigation
     debugImplementation("androidx.navigation:navigation-compose:2.7.7")
     debugImplementation("androidx.navigation:navigation-ui-ktx:2.7.7")
@@ -80,5 +79,7 @@ dependencies {
     implementation ("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp ("androidx.room:room-compiler:2.6.1")
-    //kapt ("androidx.room:room-compiler:2.6.1")
+
+    //StatusBarColor
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.19.0")
 }
