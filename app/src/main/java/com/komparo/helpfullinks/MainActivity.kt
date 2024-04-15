@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ScreenStatusBar(colorResource(id = R.color.darkblue))
             val navController = rememberNavController()
-            NavGraphNavigate(navController)
+            NavGraphNavigate(this, navController)
         }
     }
 }

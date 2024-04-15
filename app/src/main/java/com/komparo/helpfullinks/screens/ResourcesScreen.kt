@@ -1,6 +1,8 @@
 package com.komparo.helpfullinks.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -51,7 +54,7 @@ import com.komparo.helpfullinks.R
 @SuppressLint("ResourceAsColor")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ResourcesScreen(navController: NavController, texts: String,
+fun ResourcesScreen(context : Context, navController: NavController, texts: String,
                     screenTexts: MutableState<Map<String, String>>, imageId : MutableState<Map<Int, Int>>){
     val texted = rememberSaveable { mutableStateOf(screenTexts.value[texts] ?: "") }
     val selectedImage = rememberSaveable { mutableStateOf(imageId.value[texts.toInt()]) }
@@ -75,13 +78,13 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_fastfood_24
-                        choiseImage.value = R.drawable.baseline_fastfood_24
+                        selectedImage.value = R.drawable.vopros
+                        choiseImage.value = R.drawable.vopros
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                    colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))
                 ) {
-                        Image(painter = painterResource(id = R.drawable.baseline_fastfood_24),
+                        Image(painter = painterResource(id = R.drawable.vopros),
                             contentDescription = null, modifier = Modifier
                                 .size(60.dp)
                                 .padding(4.dp)
@@ -92,12 +95,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_sports_gymnastics_24
-                        choiseImage.value = R.drawable.baseline_sports_gymnastics_24
+                        selectedImage.value = R.drawable.videos
+                        choiseImage.value = R.drawable.videos
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_sports_gymnastics_24),
+                    Image(painter = painterResource(id = R.drawable.videos),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -108,12 +111,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_audiotrack_24
-                        choiseImage.value = R.drawable.baseline_audiotrack_24
+                        selectedImage.value = R.drawable.trava
+                        choiseImage.value = R.drawable.trava
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_audiotrack_24),
+                    Image(painter = painterResource(id = R.drawable.trava),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -124,12 +127,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_assignment_late_24
-                        choiseImage.value = R.drawable.baseline_assignment_late_24
+                        selectedImage.value = R.drawable.stupathree
+                        choiseImage.value = R.drawable.stupathree
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_assignment_late_24),
+                    Image(painter = painterResource(id = R.drawable.stupathree),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -140,12 +143,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_beach_access_24
-                        choiseImage.value = R.drawable.baseline_beach_access_24
+                        selectedImage.value = R.drawable.stupatwo
+                        choiseImage.value = R.drawable.stupatwo
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_beach_access_24),
+                    Image(painter = painterResource(id = R.drawable.stupatwo),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -158,13 +161,13 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_cake_24
-                        choiseImage.value = R.drawable.baseline_cake_24
+                        selectedImage.value = R.drawable.stupaone
+                        choiseImage.value = R.drawable.stupaone
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))
                 ) {
-                    Image(painter = painterResource(id = R.drawable.baseline_cake_24),
+                    Image(painter = painterResource(id = R.drawable.stupaone),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -175,12 +178,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_cloud_24
-                        choiseImage.value = R.drawable.baseline_cloud_24
+                        selectedImage.value = R.drawable.sewingmashine
+                        choiseImage.value = R.drawable.sewingmashine
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_cloud_24),
+                    Image(painter = painterResource(id = R.drawable.sewingmashine),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -191,12 +194,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_compost_24
-                        choiseImage.value = R.drawable.baseline_compost_24
+                        selectedImage.value = R.drawable.run
+                        choiseImage.value = R.drawable.run
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_compost_24),
+                    Image(painter = painterResource(id = R.drawable.run),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -207,12 +210,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_desktop_windows_24
-                        choiseImage.value = R.drawable.baseline_desktop_windows_24
+                        selectedImage.value = R.drawable.pregnant
+                        choiseImage.value = R.drawable.pregnant
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_desktop_windows_24),
+                    Image(painter = painterResource(id = R.drawable.pregnant),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -223,12 +226,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_dining_24
-                        choiseImage.value = R.drawable.baseline_dining_24
+                        selectedImage.value = R.drawable.plate
+                        choiseImage.value = R.drawable.plate
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_dining_24),
+                    Image(painter = painterResource(id = R.drawable.plate),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -241,13 +244,13 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_directions_run_24
-                        choiseImage.value = R.drawable.baseline_directions_run_24
+                        selectedImage.value = R.drawable.nofood
+                        choiseImage.value = R.drawable.nofood
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))
                 ) {
-                    Image(painter = painterResource(id = R.drawable.baseline_directions_run_24),
+                    Image(painter = painterResource(id = R.drawable.nofood),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -258,12 +261,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_duo_24
-                        choiseImage.value = R.drawable.baseline_duo_24
+                        selectedImage.value = R.drawable.nitki
+                        choiseImage.value = R.drawable.nitki
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_duo_24),
+                    Image(painter = painterResource(id = R.drawable.nitki),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -274,12 +277,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_emoji_emotions_24
-                        choiseImage.value = R.drawable.baseline_emoji_emotions_24
+                        selectedImage.value = R.drawable.hleb
+                        choiseImage.value = R.drawable.hleb
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_emoji_emotions_24),
+                    Image(painter = painterResource(id = R.drawable.hleb),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -290,12 +293,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_fitness_center_24
-                        choiseImage.value = R.drawable.baseline_fitness_center_24
+                        selectedImage.value = R.drawable.hearth
+                        choiseImage.value = R.drawable.hearth
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_fitness_center_24),
+                    Image(painter = painterResource(id = R.drawable.hearth),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -306,12 +309,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_grass_24
-                        choiseImage.value = R.drawable.baseline_grass_24
+                        selectedImage.value = R.drawable.gymnast
+                        choiseImage.value = R.drawable.gymnast
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_grass_24),
+                    Image(painter = painterResource(id = R.drawable.gymnast),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -324,13 +327,13 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_lightbulb_24
-                        choiseImage.value = R.drawable.baseline_lightbulb_24
+                        selectedImage.value = R.drawable.griadka
+                        choiseImage.value = R.drawable.griadka
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))
                 ) {
-                    Image(painter = painterResource(id = R.drawable.baseline_lightbulb_24),
+                    Image(painter = painterResource(id = R.drawable.griadka),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -341,12 +344,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_local_florist_24
-                        choiseImage.value = R.drawable.baseline_local_florist_24
+                        selectedImage.value = R.drawable.gnom
+                        choiseImage.value = R.drawable.gnom
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_local_florist_24),
+                    Image(painter = painterResource(id = R.drawable.gnom),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -357,12 +360,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_local_hospital_24
-                        choiseImage.value = R.drawable.baseline_local_hospital_24
+                        selectedImage.value = R.drawable.giria
+                        choiseImage.value = R.drawable.giria
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_local_hospital_24),
+                    Image(painter = painterResource(id = R.drawable.giria),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -373,12 +376,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_play_circle_24
-                        choiseImage.value = R.drawable.baseline_play_circle_24
+                        selectedImage.value = R.drawable.fitness
+                        choiseImage.value = R.drawable.fitness
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_play_circle_24),
+                    Image(painter = painterResource(id = R.drawable.fitness),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -389,12 +392,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_priority_high_24
-                        choiseImage.value = R.drawable.baseline_priority_high_24
+                        selectedImage.value = R.drawable.face
+                        choiseImage.value = R.drawable.face
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_priority_high_24),
+                    Image(painter = painterResource(id = R.drawable.face),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -407,13 +410,13 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_restaurant_24
-                        choiseImage.value = R.drawable.baseline_restaurant_24
+                        selectedImage.value = R.drawable.dress
+                        choiseImage.value = R.drawable.dress
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))
                 ) {
-                    Image(painter = painterResource(id = R.drawable.baseline_restaurant_24),
+                    Image(painter = painterResource(id = R.drawable.dress),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -424,12 +427,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_sick_24
-                        choiseImage.value = R.drawable.baseline_sick_24
+                        selectedImage.value = R.drawable.cloth
+                        choiseImage.value = R.drawable.cloth
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_sick_24),
+                    Image(painter = painterResource(id = R.drawable.cloth),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -440,12 +443,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_sports_24
-                        choiseImage.value = R.drawable.baseline_sports_24
+                        selectedImage.value = R.drawable.cepi
+                        choiseImage.value = R.drawable.cepi
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_sports_24),
+                    Image(painter = painterResource(id = R.drawable.cepi),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -456,12 +459,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_yard_24
-                        choiseImage.value = R.drawable.baseline_yard_24
+                        selectedImage.value = R.drawable.cake
+                        choiseImage.value = R.drawable.cake
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_yard_24),
+                    Image(painter = painterResource(id = R.drawable.cake),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -472,12 +475,12 @@ fun ResourcesScreen(navController: NavController, texts: String,
                     .size(60.dp)
                     .background(Color.Transparent)
                     .clickable {
-                        selectedImage.value = R.drawable.baseline_woman_24
-                        choiseImage.value = R.drawable.baseline_woman_24
+                        selectedImage.value = R.drawable.clothes
+                        choiseImage.value = R.drawable.clothes
                     },
                     shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp),
                     colors = CardDefaults.cardColors(colorResource(id = R.color.darkblue))) {
-                    Image(painter = painterResource(id = R.drawable.baseline_woman_24),
+                    Image(painter = painterResource(id = R.drawable.clothes),
                         contentDescription = null, modifier = Modifier
                             .size(60.dp)
                             .padding(4.dp)
@@ -524,73 +527,77 @@ fun ResourcesScreen(navController: NavController, texts: String,
                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.darkblue)),
                 shape = CutCornerShape(20.dp),
                 onClick = {
-                screenTexts.value = screenTexts.value.toMutableMap().apply { this[texts] = texted.value }
-                imageId.value = imageId.value.toMutableMap().apply { this[texts.toInt()] = selectedImage.value ?: R.drawable.baseline_image_24 }
-                navController.navigate("mainScreen/${texted.value}/${selectedImage.value}")
-                val screenData: ScreenData = when (texts.toInt()) {
-                    1 -> ScreenData.OneScreen
-                    2 -> ScreenData.TwoScreen
-                    3 -> ScreenData.ThreeScreen
-                    4 -> ScreenData.FourScreen
-                    5 -> ScreenData.FiveScreen
-                    6 -> ScreenData.SixScreen
-                    7 -> ScreenData.SevenScreen
-                    8 -> ScreenData.EightScreen
-                    9 -> ScreenData.NineScreen
-                    10 -> ScreenData.TenScreen
-                    11 -> ScreenData.ElevenScreen
-                    12 -> ScreenData.TwelveScreen
-                    13 -> ScreenData.ThirteenScreen
-                    14 -> ScreenData.FourteenScreen
-                    else -> ScreenData.FifteenScreen
-                }
-                when(screenData){
-                    is ScreenData.OneScreen -> {
+                    if(!texted.value.isNullOrEmpty()){
+                        screenTexts.value = screenTexts.value.toMutableMap().apply { this[texts] = texted.value }
+                        imageId.value = imageId.value.toMutableMap().apply { this[texts.toInt()] = selectedImage.value ?: R.drawable.baseline_image_24 }
+                        navController.navigate("mainScreen/${texted.value}/${selectedImage.value}")
+                        val screenData: ScreenData = when (texts.toInt()) {
+                            1 -> ScreenData.OneScreen
+                            2 -> ScreenData.TwoScreen
+                            3 -> ScreenData.ThreeScreen
+                            4 -> ScreenData.FourScreen
+                            5 -> ScreenData.FiveScreen
+                            6 -> ScreenData.SixScreen
+                            7 -> ScreenData.SevenScreen
+                            8 -> ScreenData.EightScreen
+                            9 -> ScreenData.NineScreen
+                            10 -> ScreenData.TenScreen
+                            11 -> ScreenData.ElevenScreen
+                            12 -> ScreenData.TwelveScreen
+                            13 -> ScreenData.ThirteenScreen
+                            14 -> ScreenData.FourteenScreen
+                            else -> ScreenData.FifteenScreen
+                        }
+                        when(screenData){
+                            is ScreenData.OneScreen -> {
 
-                    }
-                    is ScreenData.TwoScreen -> {
+                            }
+                            is ScreenData.TwoScreen -> {
 
-                    }
-                    is ScreenData.ThreeScreen -> {
+                            }
+                            is ScreenData.ThreeScreen -> {
 
-                    }
-                    is ScreenData.FourScreen -> {
+                            }
+                            is ScreenData.FourScreen -> {
 
-                    }
-                    is ScreenData.FiveScreen -> {
+                            }
+                            is ScreenData.FiveScreen -> {
 
-                    }
-                    is ScreenData.SixScreen -> {
+                            }
+                            is ScreenData.SixScreen -> {
 
-                    }
-                    is ScreenData.SevenScreen -> {
+                            }
+                            is ScreenData.SevenScreen -> {
 
-                    }
-                    is ScreenData.EightScreen -> {
+                            }
+                            is ScreenData.EightScreen -> {
 
-                    }
-                    is ScreenData.NineScreen -> {
+                            }
+                            is ScreenData.NineScreen -> {
 
-                    }
-                    is ScreenData.TenScreen -> {
+                            }
+                            is ScreenData.TenScreen -> {
 
-                    }
-                    is ScreenData.ElevenScreen -> {
+                            }
+                            is ScreenData.ElevenScreen -> {
 
-                    }
-                    is ScreenData.TwelveScreen -> {
+                            }
+                            is ScreenData.TwelveScreen -> {
 
-                    }
-                    is ScreenData.ThirteenScreen -> {
+                            }
+                            is ScreenData.ThirteenScreen -> {
 
-                    }
-                    is ScreenData.FourteenScreen -> {
+                            }
+                            is ScreenData.FourteenScreen -> {
 
-                    }
-                    is ScreenData.FifteenScreen -> {
+                            }
+                            is ScreenData.FifteenScreen -> {
 
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Введите заголовок!", Toast.LENGTH_SHORT).show()
                     }
-                }
             }) {
                 Text("Сохранить",  color = colorResource(id = R.color.milk),
                     fontSize = 24.sp,  fontFamily = FontFamily.Monospace)

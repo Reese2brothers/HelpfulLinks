@@ -13,7 +13,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun OneScreen(navController: NavController){
-Box (modifier = Modifier.fillMaxSize().background(color = Color.Black), contentAlignment = Alignment.Center){
+Box (modifier = Modifier.fillMaxSize().background(color = Color.Green), contentAlignment = Alignment.Center){
     Text(text = "One Screen", modifier = Modifier.clickable { navController.navigate("mainScreen")})
 }
 }

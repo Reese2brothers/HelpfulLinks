@@ -1,10 +1,13 @@
 package com.komparo.helpfullinks.screens
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,10 +22,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -39,7 +39,7 @@ import com.komparo.helpfullinks.R
 
 
 @Composable
-fun NavGraphNavigate(navController: NavHostController) {
+fun NavGraphNavigate(context: Context, navController: NavHostController) {
     val imageId = remember { mutableStateOf(mapOf<Int, Int>()) }
     val screenTexts = remember { mutableStateOf(mapOf<String, String>()) }
 
@@ -52,7 +52,7 @@ fun NavGraphNavigate(navController: NavHostController) {
         }
         composable("ResoursesScreen/{text}/{image}") {backStackEntry ->
             val text = backStackEntry.arguments?.getString("text") ?: ""
-            ResourcesScreen(navController, text, screenTexts, imageId)
+            ResourcesScreen(context, navController, text, screenTexts, imageId)
         }
         composable("OneScreen"){
             OneScreen(navController)
@@ -118,13 +118,6 @@ fun MainScreen(navController: NavController, screenTexts: MutableState<Map<Strin
                 )
             )
         )
-//        .drawBehind {
-//            val circleOffset = size.width * 0.5f
-//            drawCircle(
-//                radius = 300.dp.toPx(),
-//                brush = Brush.horizontalGradient(colors = listOf(Color.Yellow, Color.White)),
-//                center = Offset(x = circleOffset / 1.5f, y = size.height / 1.1f))
-//        }
     ) {
         Text(text = "Полезные ссылки",
             fontSize = 34.sp,
@@ -152,22 +145,32 @@ fun MainScreen(navController: NavController, screenTexts: MutableState<Map<Strin
                         .fillMaxSize()
                         .background(
                             brush = Brush.radialGradient(
-                                colors = listOf(colorResource(id = R.color.lightblue), colorResource(id = R.color.milk)),
-                                radius = 250f
+                                colors = listOf(
+                                    colorResource(id = R.color.lightblue),
+                                    colorResource(id = R.color.milk)
+                                ),
+                                radius = 150f
                             )
                         )
                     ) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+                            Image(painter = painterResource(id = R.drawable.sharp_delete_forever_24), contentDescription = null,
+                                modifier = Modifier.size(30.dp).padding(end = 8.dp, top = 4.dp).clickable {
+
+                                },
+                                alignment = Alignment.TopEnd)
+                        }
                         Column {
                             Image(modifier = Modifier
                                 .size(100.dp)
-                                .padding(start = 8.dp, top = 8.dp),
+                                .padding(start = 8.dp, top = 4.dp),
                                 painter = painterResource(id = imageId.value[screen] ?: R.drawable.baseline_image_24) ,
                                 contentDescription = null)
                             Text(text = screenTexts.value[screen.toString()] ?: "напишите название...",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colorResource(id = R.color.darkblue), fontFamily = FontFamily.Monospace,
-                                modifier = Modifier.padding(start = 8.dp, top = 8.dp))
+                                modifier = Modifier.padding(start = 8.dp, top = 4.dp))
                         }
                     }
                 }
