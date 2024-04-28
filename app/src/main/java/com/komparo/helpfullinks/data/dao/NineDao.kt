@@ -6,11 +6,15 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.komparo.helpfullinks.data.model.Nine
+import com.komparo.helpfullinks.data.model.Two
 
 @Dao
 interface NineDao {
-    @Query("SELECT * FROM nine")
-    fun getAll(): List<Nine>
+    @Query("SELECT * FROM Nine")
+    fun getTitle(): Nine?
+
+    @Query("SELECT * FROM Nine ")
+    fun getImage(): Nine?
 
     @Query("DELETE FROM nine")
     fun deleteAll()
@@ -18,9 +22,4 @@ interface NineDao {
     @Insert
     fun insertNine(nine : Nine)
 
-    @Delete
-    fun deleteNine(nine : Nine)
-
-    @Update
-    fun updateNine(nine : Nine)
 }

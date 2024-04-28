@@ -6,11 +6,15 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.komparo.helpfullinks.data.model.Six
+import com.komparo.helpfullinks.data.model.Two
 
 @Dao
 interface SixDao {
-    @Query("SELECT * FROM six")
-    fun getAll(): List<Six>
+    @Query("SELECT * FROM Six")
+    fun getTitle(): Six?
+
+    @Query("SELECT * FROM Six ")
+    fun getImage(): Six?
 
     @Query("DELETE FROM six")
     fun deleteAll()
@@ -18,9 +22,4 @@ interface SixDao {
     @Insert
     fun insertSix(six : Six)
 
-    @Delete
-    fun deleteSix(six : Six)
-
-    @Update
-    fun updateSix(six : Six)
 }

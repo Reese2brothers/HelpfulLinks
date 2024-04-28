@@ -6,11 +6,15 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.komparo.helpfullinks.data.model.Twelve
+import com.komparo.helpfullinks.data.model.Two
 
 @Dao
 interface TwelveDao {
-    @Query("SELECT * FROM twelve")
-    fun getAll(): List<Twelve>
+    @Query("SELECT * FROM Twelve")
+    fun getTitle(): Twelve?
+
+    @Query("SELECT * FROM Twelve ")
+    fun getImage(): Twelve?
 
     @Query("DELETE FROM twelve")
     fun deleteAll()
@@ -18,9 +22,4 @@ interface TwelveDao {
     @Insert
     fun insertTwelve(twelve : Twelve)
 
-    @Delete
-    fun deleteTwelve(twelve : Twelve)
-
-    @Update
-    fun updateTwelve(twelve : Twelve)
 }

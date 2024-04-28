@@ -6,11 +6,15 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.komparo.helpfullinks.data.model.Five
+import com.komparo.helpfullinks.data.model.Two
 
 @Dao
 interface FiveDao {
-    @Query("SELECT * FROM five")
-    fun getAll(): List<Five>
+    @Query("SELECT * FROM Five")
+    fun getTitle(): Five?
+
+    @Query("SELECT * FROM Five")
+    fun getImage(): Five?
 
     @Query("DELETE FROM five")
     fun deleteAll()
@@ -18,9 +22,4 @@ interface FiveDao {
     @Insert
     fun insertFive(five : Five)
 
-    @Delete
-    fun deleteFive(five : Five)
-
-    @Update
-    fun updateFive(five : Five)
 }

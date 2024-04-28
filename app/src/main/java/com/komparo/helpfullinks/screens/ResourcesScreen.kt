@@ -3,7 +3,6 @@ package com.komparo.helpfullinks.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +21,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,14 +30,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -50,11 +45,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.komparo.helpfullinks.R
+import com.komparo.helpfullinks.data.AppDatabase
+import com.komparo.helpfullinks.data.model.Eight
+import com.komparo.helpfullinks.data.model.Eleven
+import com.komparo.helpfullinks.data.model.Fifteen
+import com.komparo.helpfullinks.data.model.Five
+import com.komparo.helpfullinks.data.model.Four
+import com.komparo.helpfullinks.data.model.Fourteen
+import com.komparo.helpfullinks.data.model.Nine
+import com.komparo.helpfullinks.data.model.One
+import com.komparo.helpfullinks.data.model.Seven
+import com.komparo.helpfullinks.data.model.Six
+import com.komparo.helpfullinks.data.model.Ten
+import com.komparo.helpfullinks.data.model.Thirteen
+import com.komparo.helpfullinks.data.model.Three
+import com.komparo.helpfullinks.data.model.Twelve
+import com.komparo.helpfullinks.data.model.Two
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 @SuppressLint("ResourceAsColor")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ResourcesScreen(context : Context, navController: NavController, texts: String,
+fun ResourcesScreen(database : AppDatabase, context : Context, navController: NavController, texts: String,
                     screenTexts: MutableState<Map<String, String>>, imageId : MutableState<Map<Int, Int>>){
     val texted = rememberSaveable { mutableStateOf(screenTexts.value[texts] ?: "") }
     val selectedImage = rememberSaveable { mutableStateOf(imageId.value[texts.toInt()]) }
@@ -532,67 +546,82 @@ fun ResourcesScreen(context : Context, navController: NavController, texts: Stri
                         imageId.value = imageId.value.toMutableMap().apply { this[texts.toInt()] = selectedImage.value ?: R.drawable.baseline_image_24 }
                         navController.navigate("mainScreen/${texted.value}/${selectedImage.value}")
                         val screenData: ScreenData = when (texts.toInt()) {
-                            1 -> ScreenData.OneScreen
-                            2 -> ScreenData.TwoScreen
-                            3 -> ScreenData.ThreeScreen
-                            4 -> ScreenData.FourScreen
-                            5 -> ScreenData.FiveScreen
-                            6 -> ScreenData.SixScreen
-                            7 -> ScreenData.SevenScreen
-                            8 -> ScreenData.EightScreen
-                            9 -> ScreenData.NineScreen
-                            10 -> ScreenData.TenScreen
-                            11 -> ScreenData.ElevenScreen
-                            12 -> ScreenData.TwelveScreen
-                            13 -> ScreenData.ThirteenScreen
-                            14 -> ScreenData.FourteenScreen
+                            0 -> ScreenData.OneScreen
+                            1 -> ScreenData.TwoScreen
+                            2 -> ScreenData.ThreeScreen
+                            3 -> ScreenData.FourScreen
+                            4 -> ScreenData.FiveScreen
+                            5 -> ScreenData.SixScreen
+                            6 -> ScreenData.SevenScreen
+                            7 -> ScreenData.EightScreen
+                            8 -> ScreenData.NineScreen
+                            9 -> ScreenData.TenScreen
+                            10 -> ScreenData.ElevenScreen
+                            11 -> ScreenData.TwelveScreen
+                            12 -> ScreenData.ThirteenScreen
+                            13 -> ScreenData.FourteenScreen
                             else -> ScreenData.FifteenScreen
                         }
                         when(screenData){
                             is ScreenData.OneScreen -> {
-
+                                    database.oneDao().deleteAll()
+                                    database.oneDao().insertOne(One(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.TwoScreen -> {
-
+                                database.twoDao().deleteAll()
+                                database.twoDao().insertTwo(Two(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.ThreeScreen -> {
-
+                                database.threeDao().deleteAll()
+                                database.threeDao().insertThree(Three(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.FourScreen -> {
-
+                                database.fourDao().deleteAll()
+                                database.fourDao().insertFour(Four(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.FiveScreen -> {
-
+                                database.fiveDao().deleteAll()
+                                database.fiveDao().insertFive(Five(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.SixScreen -> {
-
+                                database.sixDao().deleteAll()
+                                database.sixDao().insertSix(Six(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.SevenScreen -> {
-
+                                database.sevenDao().deleteAll()
+                                database.sevenDao().insertSeven(Seven(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.EightScreen -> {
-
+                                database.eightDao().deleteAll()
+                                database.eightDao().insertEight(Eight(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.NineScreen -> {
-
+                                database.nineDao().deleteAll()
+                                database.nineDao().insertNine(Nine(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.TenScreen -> {
-
+                                database.tenDao().deleteAll()
+                                database.tenDao().insertTen(Ten(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.ElevenScreen -> {
-
+                                database.elevenDao().deleteAll()
+                                database.elevenDao().insertEleven(Eleven(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.TwelveScreen -> {
-
+                                database.twelveDao().deleteAll()
+                                database.twelveDao().insertTwelve(Twelve(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.ThirteenScreen -> {
-
+                                database.thirteenDao().deleteAll()
+                                database.thirteenDao().insertThirteen(Thirteen(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.FourteenScreen -> {
-
+                                database.fourteenDao().deleteAll()
+                                database.fourteenDao().insertFourteen(Fourteen(title = texted.value, image = selectedImage.value.toString()))
                             }
                             is ScreenData.FifteenScreen -> {
-
+                                database.fifteenDao().deleteAll()
+                                database.fifteenDao().insertFifteen(Fifteen(title = texted.value, image = selectedImage.value.toString()))
                             }
                         }
                     } else {

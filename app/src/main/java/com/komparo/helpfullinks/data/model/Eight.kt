@@ -7,8 +7,6 @@ import androidx.room.PrimaryKey
 data class Eight(
     val title: String,
     val image: String,
-    val linktext : String,
-    val linkimage : String
 )
 {
     @PrimaryKey(autoGenerate = true)

@@ -4,12 +4,9 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -36,23 +34,25 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.komparo.helpfullinks.R
-
+import com.komparo.helpfullinks.data.AppDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
-fun NavGraphNavigate(context: Context, navController: NavHostController) {
+fun NavGraphNavigate(database : AppDatabase, context: Context, navController: NavHostController) {
     val imageId = remember { mutableStateOf(mapOf<Int, Int>()) }
     val screenTexts = remember { mutableStateOf(mapOf<String, String>()) }
 
     NavHost(navController = navController, startDestination = "mainScreen"){
         composable("mainScreen"){
-            MainScreen(navController = navController, screenTexts = screenTexts, imageId = imageId)
+            MainScreen(database, context, navController = navController, screenTexts = screenTexts, imageId = imageId)
         }
         composable("mainScreen/{text}/{image}"){
-            MainScreen(navController, screenTexts, imageId)
+            MainScreen(database, context, navController, screenTexts, imageId)
         }
         composable("ResoursesScreen/{text}/{image}") {backStackEntry ->
             val text = backStackEntry.arguments?.getString("text") ?: ""
-            ResourcesScreen(context, navController, text, screenTexts, imageId)
+            ResourcesScreen(database, context, navController, text, screenTexts, imageId)
         }
         composable("OneScreen"){
             OneScreen(navController)
@@ -103,11 +103,11 @@ fun NavGraphNavigate(context: Context, navController: NavHostController) {
 }
 
 @Composable
-fun MainScreen(navController: NavController, screenTexts: MutableState<Map<String, String>>, imageId : MutableState<Map<Int, Int>>) {
+fun MainScreen(database : AppDatabase, context : Context, navController: NavController, screenTexts: MutableState<Map<String, String>>, imageId : MutableState<Map<Int, Int>>) {
     val screens = listOf("OneScreen", "TwoScreen", "ThreeScreen", "FourScreen", "FiveScreen",
         "SixScreen", "SevenScreen", "EightScreen", "NineScreen", "TenScreen", "ElevenScreen",
         "TwelveScreen", "ThirteenScreen", "FourteenScreen", "FifteenScreen")
-
+    val scope = rememberCoroutineScope()
     Box(modifier = Modifier
         .fillMaxSize()
         .background(
@@ -128,12 +128,234 @@ fun MainScreen(navController: NavController, screenTexts: MutableState<Map<Strin
                 .align(alignment = Alignment.TopCenter))
         LazyVerticalGrid(GridCells.Fixed(2), modifier = Modifier.padding(top = 64.dp)){
             items(15) { screen ->
+            val title = when (screen) {
+                0 -> {
+                    if(database.oneDao().getTitle()?.title != null){
+                        database.oneDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                1 -> {
+                    if(database.twoDao().getTitle()?.title != null){
+                        database.twoDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                2 -> {
+                    if(database.threeDao().getTitle()?.title != null){
+                        database.threeDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                3 -> {
+                    if(database.fourDao().getTitle()?.title != null){
+                        database.fourDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                4 -> {
+                    if(database.fiveDao().getTitle()?.title != null){
+                        database.fiveDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                5 -> {
+                    if(database.sixDao().getTitle()?.title != null){
+                        database.sixDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                6 -> {
+                    if(database.sevenDao().getTitle()?.title != null){
+                        database.sevenDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                7 -> {
+                    if(database.eightDao().getTitle()?.title != null){
+                        database.eightDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                8 -> {
+                    if(database.nineDao().getTitle()?.title != null){
+                        database.nineDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                9 -> {
+                    if(database.tenDao().getTitle()?.title != null){
+                        database.tenDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                10 -> {
+                    if(database.elevenDao().getTitle()?.title != null){
+                        database.elevenDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                11 -> {
+                    if(database.twelveDao().getTitle()?.title != null){
+                        database.twelveDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                12 -> {
+                    if(database.thirteenDao().getTitle()?.title != null){
+                        database.thirteenDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                13 -> {
+                    if(database.fourteenDao().getTitle()?.title != null){
+                        database.fourteenDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                14 -> {
+                    if(database.fifteenDao().getTitle()?.title != null){
+                        database.fifteenDao().getTitle()?.title.toString()
+                    } else{
+                        "напишите название..."
+                    }
+                }
+                else -> "напишите название..."
+            }
+            val image = when (screen) {
+                0 -> {
+                    if(database.oneDao().getImage()?.image != null){
+                        database.oneDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                1 -> {
+                    if(database.twoDao().getImage()?.image != null){
+                        database.twoDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                2 -> {
+                    if(database.threeDao().getImage()?.image != null){
+                        database.threeDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                3 -> {
+                    if(database.fourDao().getImage()?.image != null){
+                        database.fourDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                4 -> {
+                    if(database.fiveDao().getImage()?.image != null){
+                        database.fiveDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                5 -> {
+                    if(database.sixDao().getImage()?.image != null){
+                        database.sixDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                6 -> {
+                    if(database.sevenDao().getImage()?.image != null){
+                        database.sevenDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                7 -> {
+                    if(database.eightDao().getImage()?.image != null){
+                        database.eightDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                8 -> {
+                    if(database.nineDao().getImage()?.image != null){
+                        database.nineDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                9 -> {
+                    if(database.tenDao().getImage()?.image != null){
+                        database.tenDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                10 -> {
+                    if(database.elevenDao().getImage()?.image != null){
+                        database.elevenDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                11 -> {
+                    if(database.twelveDao().getImage()?.image != null){
+                        database.twelveDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                12 -> {
+                    if(database.thirteenDao().getImage()?.image != null){
+                        database.thirteenDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                13 -> {
+                    if(database.fourteenDao().getImage()?.image != null){
+                        database.fourteenDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                14 -> {
+                    if(database.fifteenDao().getImage()?.image != null){
+                        database.fifteenDao().getImage()?.image!!.toInt()
+                    } else{
+                        R.drawable.baseline_image_24
+                    }
+                }
+                else -> R.drawable.baseline_image_24
+            }
                 Card(
                     modifier = Modifier
                         .padding(8.dp)
                         .size(150.dp)
                         .background(Color.Transparent)
-                        .clickable { navController.navigate("ResoursesScreen/$screen/$screen") },
+                        .clickable {
+                            if (title != "напишите название..." && image != R.drawable.baseline_image_24) {
+                                navController.navigate(screens[screen])
+                            } else {
+                                navController.navigate("ResoursesScreen/$screen/$screen")
+                            }
+                        },
                     shape = CutCornerShape(
                         topStart = 4.dp,
                         topEnd = 4.dp,
@@ -153,24 +375,19 @@ fun MainScreen(navController: NavController, screenTexts: MutableState<Map<Strin
                             )
                         )
                     ) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
-                            Image(painter = painterResource(id = R.drawable.sharp_delete_forever_24), contentDescription = null,
-                                modifier = Modifier.size(30.dp).padding(end = 8.dp, top = 4.dp).clickable {
 
-                                },
-                                alignment = Alignment.TopEnd)
-                        }
                         Column {
-                            Image(modifier = Modifier
-                                .size(100.dp)
-                                .padding(start = 8.dp, top = 4.dp),
-                                painter = painterResource(id = imageId.value[screen] ?: R.drawable.baseline_image_24) ,
-                                contentDescription = null)
-                            Text(text = screenTexts.value[screen.toString()] ?: "напишите название...",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = colorResource(id = R.color.darkblue), fontFamily = FontFamily.Monospace,
-                                modifier = Modifier.padding(start = 8.dp, top = 4.dp))
+                            Image( painter = painterResource(id = image),
+                                contentDescription = null,
+                                modifier = Modifier.size(100.dp).padding(start = 8.dp, top = 4.dp)
+                               )
+                            Text(text = title,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colorResource(id = R.color.darkblue),
+                                    fontFamily = FontFamily.Monospace,
+                                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                            )
                         }
                     }
                 }

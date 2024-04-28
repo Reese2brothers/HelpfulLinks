@@ -6,11 +6,15 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.komparo.helpfullinks.data.model.Eight
+import com.komparo.helpfullinks.data.model.Two
 
 @Dao
 interface EightDao {
-    @Query("SELECT * FROM eight")
-    fun getAll(): List<Eight>
+    @Query("SELECT * FROM Eight")
+    fun getTitle(): Eight?
+
+    @Query("SELECT * FROM Eight ")
+    fun getImage(): Eight?
 
     @Query("DELETE FROM eight")
     fun deleteAll()
@@ -18,9 +22,4 @@ interface EightDao {
     @Insert
     fun insertEight(eight : Eight)
 
-    @Delete
-    fun deleteEight(eight : Eight)
-
-    @Update
-    fun updateEight(eight : Eight)
 }
