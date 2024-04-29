@@ -1,12 +1,16 @@
 package com.komparo.helpfullinks.screens
 
+import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -18,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,8 +38,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.komparo.helpfullinks.R
 import com.komparo.helpfullinks.data.AppDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 @Composable
 fun NavGraphNavigate(database : AppDatabase, context: Context, navController: NavHostController) {
@@ -55,7 +57,7 @@ fun NavGraphNavigate(database : AppDatabase, context: Context, navController: Na
             ResourcesScreen(database, context, navController, text, screenTexts, imageId)
         }
         composable("OneScreen"){
-            OneScreen(navController)
+            OneScreen(context, database, navController)
         }
         composable("TwoScreen"){
             TwoScreen(navController)
@@ -103,11 +105,11 @@ fun NavGraphNavigate(database : AppDatabase, context: Context, navController: Na
 }
 
 @Composable
-fun MainScreen(database : AppDatabase, context : Context, navController: NavController, screenTexts: MutableState<Map<String, String>>, imageId : MutableState<Map<Int, Int>>) {
+fun MainScreen(database : AppDatabase, context : Context, navController: NavController,
+               screenTexts: MutableState<Map<String, String>>, imageId : MutableState<Map<Int, Int>>) {
     val screens = listOf("OneScreen", "TwoScreen", "ThreeScreen", "FourScreen", "FiveScreen",
         "SixScreen", "SevenScreen", "EightScreen", "NineScreen", "TenScreen", "ElevenScreen",
         "TwelveScreen", "ThirteenScreen", "FourteenScreen", "FifteenScreen")
-    val scope = rememberCoroutineScope()
     Box(modifier = Modifier
         .fillMaxSize()
         .background(
@@ -119,13 +121,23 @@ fun MainScreen(database : AppDatabase, context : Context, navController: NavCont
             )
         )
     ) {
-        Text(text = "Полезные ссылки",
-            fontSize = 34.sp,
-            fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.milk), fontFamily = FontFamily.Monospace,
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .align(alignment = Alignment.TopCenter))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Полезные ссылки",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.white), fontFamily = FontFamily.Monospace,
+                modifier = Modifier
+                    .padding(start = 16.dp))
+            Image(painter = painterResource(id = R.drawable.baseline_exit_to_app_24), contentDescription = null,
+                modifier = Modifier.size(50.dp).padding(end = 16.dp).clickable {
+                    (context as Activity).finishAffinity()
+                })
+        }
+
         LazyVerticalGrid(GridCells.Fixed(2), modifier = Modifier.padding(top = 64.dp)){
             items(15) { screen ->
             val title = when (screen) {
@@ -379,7 +391,9 @@ fun MainScreen(database : AppDatabase, context : Context, navController: NavCont
                         Column {
                             Image( painter = painterResource(id = image),
                                 contentDescription = null,
-                                modifier = Modifier.size(100.dp).padding(start = 8.dp, top = 4.dp)
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .padding(start = 8.dp, top = 4.dp)
                                )
                             Text(text = title,
                                     fontSize = 16.sp,

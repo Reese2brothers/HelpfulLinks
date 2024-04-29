@@ -93,4 +93,10 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+
+    //Jsoup
+    implementation ("org.jsoup:jsoup:1.17.2")
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:1.4.0")
 }

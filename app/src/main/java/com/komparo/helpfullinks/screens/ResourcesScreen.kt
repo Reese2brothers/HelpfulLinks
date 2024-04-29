@@ -30,7 +30,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,8 +60,6 @@ import com.komparo.helpfullinks.data.model.Thirteen
 import com.komparo.helpfullinks.data.model.Three
 import com.komparo.helpfullinks.data.model.Twelve
 import com.komparo.helpfullinks.data.model.Two
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("ResourceAsColor")
