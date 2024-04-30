@@ -10,4 +10,8 @@
     <color name="milk">#B6AFAF</color>
     <color name="darkblue">#013965</color>
     <color name="lightblue">#37A1F6</color>
+    <color name="lightfield">#94CAF4</color>
+    <color name="orange">#C03306</color>
+    <color name="lightorange">#FA754B</color>
+    <color name="green">#059E0B</color>
 </resources>

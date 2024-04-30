@@ -18,12 +18,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -498,7 +502,7 @@ fun ResourcesScreen(database : AppDatabase, context : Context, navController: Na
                             .background(colorResource(id = R.color.milk)))
                 }
             }
-            Divider(color = colorResource(id = R.color.milk), thickness = 2.dp, modifier = Modifier
+            Divider(color = colorResource(id = R.color.darkblue), thickness = 2.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp))
             TextField(value = texted.value, onValueChange = { newValue -> texted.value = newValue },
@@ -510,12 +514,22 @@ fun ResourcesScreen(database : AppDatabase, context : Context, navController: Na
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
                 ),
+                label = { Text("Введите название раздела здесь", color = colorResource(id = R.color.orange)) },
                 colors = TextFieldDefaults.textFieldColors(
-                    containerColor = colorResource(id = R.color.milk),
-                    cursorColor = colorResource(id = R.color.darkblue),
+                    containerColor = colorResource(id = R.color.lightfield),
+                    cursorColor = colorResource(id = R.color.orange),
                     unfocusedIndicatorColor = colorResource(id = R.color.darkblue),
-                    textColor = colorResource(id = R.color.darkblue)
-                )
+                    focusedIndicatorColor = colorResource(id = R.color.orange),
+                    textColor = colorResource(id = R.color.darkblue)),
+                trailingIcon = {
+                    if (texted.value.isNotEmpty()) {
+                        IconButton(onClick = { texted.value = "" }) {
+                            Icon(Icons.Default.Clear, contentDescription = "Очистить поле", tint = colorResource(
+                                id = R.color.orange
+                            ))
+                        }
+                    }
+                }
             )
             Card( modifier = Modifier
                 .padding(top = 16.dp)
@@ -538,7 +552,7 @@ fun ResourcesScreen(database : AppDatabase, context : Context, navController: Na
                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.darkblue)),
                 shape = CutCornerShape(20.dp),
                 onClick = {
-                    if(!texted.value.isNullOrEmpty()){
+                    if(!texted.value.isNullOrEmpty() && selectedImage.value != null){
                         screenTexts.value = screenTexts.value.toMutableMap().apply { this[texts] = texted.value }
                         imageId.value = imageId.value.toMutableMap().apply { this[texts.toInt()] = selectedImage.value ?: R.drawable.baseline_image_24 }
                         navController.navigate("mainScreen/${texted.value}/${selectedImage.value}")
@@ -622,10 +636,10 @@ fun ResourcesScreen(database : AppDatabase, context : Context, navController: Na
                             }
                         }
                     } else {
-                        Toast.makeText(context, "Введите заголовок!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Введите заголовок  и установите картинку!", Toast.LENGTH_SHORT).show()
                     }
             }) {
-                Text("Сохранить",  color = colorResource(id = R.color.milk),
+                Text("Сохранить",  color = colorResource(id = R.color.lightorange),
                     fontSize = 24.sp,  fontFamily = FontFamily.Monospace)
             }
         }

@@ -2,6 +2,7 @@ package com.komparo.helpfullinks.screens
 
 import android.app.Activity
 import android.content.Context
+import android.view.Window
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

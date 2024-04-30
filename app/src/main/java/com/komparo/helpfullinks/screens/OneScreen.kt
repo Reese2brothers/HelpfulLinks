@@ -5,9 +5,10 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
+import android.view.Window
+import android.view.inputmethod.InputMethodManager
+import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,47 +24,53 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.komparo.helpfullinks.R
 import com.komparo.helpfullinks.data.AppDatabase
+import com.komparo.helpfullinks.data.dao.ScreenOneDao
+import com.komparo.helpfullinks.data.model.ScreenOne
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -74,9 +81,12 @@ import org.jsoup.Jsoup
 @Composable
 fun OneScreen(context : Context, database : AppDatabase, navController: NavController) {
     val texted = rememberSaveable { mutableStateOf("") }
-    val items = remember { mutableStateListOf<Pair<String, UrlData>>() }
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
+    val showDialog = remember { mutableStateOf(false) }
+    val showIdDialog = remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(false) }
+    val items = remember { mutableStateListOf<UrlData>() }
 
     Scaffold(
         bottomBar = {
@@ -92,14 +102,61 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                     modifier = Modifier
                         .size(40.dp)
                         .clickable {
-                            items.clear()
-                            texted.value = ""
+                            showDialog.value = true
                         })
-                TextField(
+                if (showDialog.value) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            showDialog.value = false
+                        },
+                        title = { Text("Подтверждение", color = colorResource(id = R.color.darkblue)) },
+                        text = { Text("Вы уверены, что хотите полностью удалить весь раздел и все данные?",
+                            color = colorResource(id = R.color.darkblue)) },
+                        confirmButton = {
+                            Button(colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkblue)),
+                                onClick = {
+                                items.clear()
+                                texted.value = ""
+                                database.oneDao().deleteAll()
+                                    database.screenOneDao().deleteAll()
+                                navController.navigate("mainScreen")
+                                showDialog.value = false
+                            }) {
+                                Text("Да", color = colorResource(id = R.color.white))
+                            }
+                        },
+                        dismissButton = {
+                            Button(colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkblue)),
+                                onClick = {
+                                showDialog.value = false
+                            }) {
+                                Text("Нет", color = colorResource(id = R.color.white))
+                            }
+                        }
+                    )
+                }
+                TextField(colors = TextFieldDefaults.textFieldColors(
+                    containerColor = colorResource(id = R.color.lightfield),
+                    cursorColor = colorResource(id = R.color.orange),
+                    unfocusedIndicatorColor = colorResource(id = R.color.darkblue),
+                    focusedIndicatorColor = colorResource(id = R.color.orange),
+                    textColor = colorResource(id = R.color.darkblue)),
                     value = texted.value, onValueChange = { newValue -> texted.value = newValue },
                     modifier = Modifier.weight(1f),
-                    label = { Text("Введите ссылку здесь") }
+                    label = { Text("Введите ссылку здесь", color = colorResource(id = R.color.orange)) },
+                    trailingIcon = {
+                        if (texted.value.isNotEmpty()) {
+                            IconButton(onClick = { texted.value = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Очистить поле", tint = colorResource(
+                                    id = R.color.orange
+                                ))
+                            }
+                        }
+                    }
                 )
+                if (isLoading.value) {
+                    CircularProgressIndicator(color = colorResource(id = R.color.orange), strokeWidth = 3.dp)
+                }
                 Image(painter = painterResource(id = R.drawable.baseline_save_24),
                     contentDescription = null,
                     modifier = Modifier
@@ -107,16 +164,33 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                         .clickable {
                             if (texted.value.isNotEmpty()) {
                                 scope.launch {
-                                    val urlsData = fetchUrlData(texted.value)
-                                    items.add(0, Pair(texted.value, urlsData))
-                                    listState.animateScrollToItem(index = 0)
+                                    isLoading.value = true
+                                    val urlsData = fetchUrlData(database, texted.value)
+                                    database
+                                        .screenOneDao()
+                                        .insertScreenOne(
+                                            ScreenOne(
+                                                linktext = urlsData.title,
+                                                linkimage = urlsData.imageUrl,
+                                                url = urlsData.url
+                                            )
+                                        )
+                                    items.add(items.size, urlsData)
+                                    listState.animateScrollToItem(index = items.size)
+                                    isLoading.value = false
                                 }
                             } else {
-                                Toast.makeText(context, "Нет ничего для сохранения!", Toast.LENGTH_SHORT).show()
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Нет ничего для сохранения!",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
                             }
                         })
-            }
-        }
+                    }
+                }
     ) {
         Box(
             modifier = Modifier
@@ -142,10 +216,16 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                         .clickable { navController.navigate("mainScreen") },
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.white)
+                    color = colorResource(id = R.color.orange)
                 )
-                LazyColumn(modifier = Modifier.padding(bottom = 72.dp), state = listState) {
-                    items(items) { item ->
+
+                LaunchedEffect(Unit) {
+                    scope.launch {
+                        items.addAll(getAllLinksAsUrlData(database.screenOneDao()))
+                    }
+                }
+                LazyColumn(modifier = Modifier.padding(top = 8.dp, bottom = 72.dp), state = listState) {
+                    items(items) {  item ->
                         Card(
                             modifier = Modifier
                                 .padding(8.dp)
@@ -192,13 +272,44 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                     Row( modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.End
                                     ){
+                                        if (showIdDialog.value) {
+                                            AlertDialog(
+                                                onDismissRequest = {
+                                                    showIdDialog.value = false
+                                                },
+                                                title = { Text("Подтверждение", color = colorResource(id = R.color.darkblue)) },
+                                                text = { Text("Вы уверены, что хотите удалить элемент из списка?",
+                                                    color = colorResource(id = R.color.darkblue)) },
+                                                confirmButton = {
+                                                    Button(colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkblue)),
+                                                        onClick = {
+                                                            val screenOneItem = ScreenOne(linktext = item.title, linkimage = item.imageUrl, url = item.url, id = item.id)
+                                                            database.screenOneDao().deleteScreenOne(screenOneItem)
+                                                            items.remove(item)
+                                                            showIdDialog.value = false
+                                                        }) {
+                                                        Text("Да", color = colorResource(id = R.color.white))
+                                                    }
+                                                },
+                                                dismissButton = {
+                                                    Button(colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkblue)),
+                                                        onClick = {
+                                                            showIdDialog.value = false
+                                                        }) {
+                                                        Text("Нет", color = colorResource(id = R.color.white))
+                                                    }
+                                                }
+                                            )
+                                        }
                                         Image(
-                                            painter = painterResource(id = R.drawable.sharp_delete_forever_24),
+                                            painter = painterResource(id = R.drawable.sharp_delete_forever_two_24),
                                             contentDescription = null,
                                             modifier = Modifier
                                                 .size(40.dp)
                                                 .padding(end = 16.dp)
-                                                .clickable { items.remove(item) },
+                                                .clickable {
+                                                    showIdDialog.value = true
+                                                },
                                             alignment = Alignment.CenterEnd
                                         )
                                     }
@@ -212,10 +323,9 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                         .fillMaxWidth()
                                         .wrapContentHeight()
                                         .background(Color.Transparent),
-                                        shape = CutCornerShape(bottomStart = 16.dp, topStart = 16.dp, topEnd = 16.dp, bottomEnd = 16.dp)) {
+                                        shape = CutCornerShape(bottomStart = 10.dp, topStart = 10.dp, topEnd = 10.dp, bottomEnd = 10.dp)) {
                                         Image(painter = rememberImagePainter(
-                                                data = item.second.imageUrl),
-                                               // builder = { fallback(R.drawable.emptylink) }),
+                                                data = item.imageUrl),
                                             contentDescription = null,
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -223,20 +333,22 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                         )
                                     }
                                     val annotatedString = buildAnnotatedString {
-                                        withStyle(style = SpanStyle(color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold,
+                                        withStyle(style = SpanStyle(color = colorResource(id = R.color.darkblue), fontSize = 18.sp, fontWeight = FontWeight.Bold,
                                         textDecoration = TextDecoration.Underline)) {
-                                            append(item.first)
+                                            append(item.title)
                                             addStringAnnotation(
                                                 tag = "URL",
-                                                annotation = item.first,
+                                                annotation = item.url,
                                                 start = 0,
-                                                end = item.first.length
+                                                end = item.title.length
                                             )
                                         }
                                     }
                                     Row {
                                         Image(painter = painterResource(id = R.drawable.globals), contentDescription = null,
-                                            modifier = Modifier.size(50.dp).padding(start = 8.dp))
+                                            modifier = Modifier
+                                                .size(50.dp)
+                                                .padding(start = 8.dp))
                                         ClickableText(
                                             text = annotatedString,
                                             onClick = { offset ->
@@ -256,6 +368,9 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                             modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 8.dp, bottom = 8.dp)
                                         )
                                     }
+                                    Text(text = item.url, modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp), fontSize = 14.sp, color = colorResource(
+                                        id = R.color.darkblue
+                                    ), fontWeight = FontWeight.Bold)
 
                                 }
                             }
@@ -268,17 +383,33 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
     }
 }
 
-data class UrlData(val title: String, val imageUrl: String)
+data class UrlData(val id : Int, val title: String, val imageUrl: String, val url: String)
 
-suspend fun fetchUrlData(url: String): UrlData {
+suspend fun fetchUrlData(database : AppDatabase, url: String): UrlData {
+    var title = ""
+    var imageUrl = ""
+    val id = 0
     return withContext(Dispatchers.IO) {
         try {
             val doc = Jsoup.connect(url).get()
-            val title = doc.title()
-            val imageUrl = doc.select("meta[property=og:image]").first()?.attr("content")
-            UrlData(title, imageUrl ?: "")
+             title = doc.title()
+             imageUrl = doc.select("meta[property=og:image]").first()?.attr("content").toString()
+            UrlData(id, title, imageUrl ?: "", url)
         } catch (e: Exception) {
-            UrlData("", "")
+            e.printStackTrace()
+            if (title.isNotEmpty()) {
+                val screenOne = ScreenOne(linkimage = imageUrl, linktext = title, url = title)
+                database.screenOneDao().insertScreenOne(screenOne)
+            }
+            UrlData(id, title, imageUrl, url)
         }
     }
 }
+suspend fun getAllLinksAsUrlData(dao: ScreenOneDao): List<UrlData> {
+    return dao.getAllLinks().map { ScreenOne ->
+        UrlData(ScreenOne.id, ScreenOne.linktext, ScreenOne.linkimage, ScreenOne.url)
+    }
+}
+
+
+
