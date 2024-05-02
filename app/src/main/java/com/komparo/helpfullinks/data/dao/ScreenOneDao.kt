@@ -13,11 +13,14 @@ interface ScreenOneDao {
     suspend fun getAllLinks(): List<ScreenOne>
 
     @Query("DELETE FROM ScreenOne")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Insert
-    fun insertScreenOne(screenOne : ScreenOne)
+    suspend fun insertScreenOne(screenOne : ScreenOne)
 
     @Delete
-    fun deleteScreenOne(screenOne : ScreenOne)
+    suspend fun deleteScreenOne(screenOne : ScreenOne)
+
+//    @Query("DELETE FROM ScreenOne WHERE id = :id")
+//    fun deleteScreenOneById(id: Int)
 }

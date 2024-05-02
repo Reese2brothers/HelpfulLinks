@@ -83,7 +83,7 @@ fun ResourcesScreen(database : AppDatabase, context : Context, navController: Na
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Column (modifier = Modifier.height(380.dp).verticalScroll(rememberScrollState())
+            Column (modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())
                 ){
                 Row(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
                     Card( modifier = Modifier
@@ -917,9 +917,8 @@ fun ResourcesScreen(database : AppDatabase, context : Context, navController: Na
                     }
                 }
             }
-            Column (modifier = Modifier)
+            Column (modifier = Modifier.padding(bottom = 8.dp))
             {
-                //Column {
                 Divider(color = colorResource(id = R.color.darkblue), thickness = 2.dp, modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp, top = 8.dp, start = 8.dp, end = 8.dp))
@@ -959,7 +958,7 @@ fun ResourcesScreen(database : AppDatabase, context : Context, navController: Na
                 Button(modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
-                    .padding(start = 8.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),
+                    .padding(start = 8.dp, end = 8.dp, top = 16.dp, bottom = 8.dp),
                     colors = ButtonDefaults.buttonColors(colorResource(id = R.color.darkblue)),
                     shape = CutCornerShape(20.dp),
                     onClick = {
@@ -1053,7 +1052,6 @@ fun ResourcesScreen(database : AppDatabase, context : Context, navController: Na
                     Text("Сохранить",  color = colorResource(id = R.color.lightorange),
                         fontSize = 24.sp,  fontFamily = FontFamily.Monospace)
                 }
-                // }
             }
         }
     }

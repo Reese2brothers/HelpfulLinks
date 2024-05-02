@@ -45,12 +45,15 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -71,12 +74,13 @@ import com.komparo.helpfullinks.R
 import com.komparo.helpfullinks.data.AppDatabase
 import com.komparo.helpfullinks.data.dao.ScreenOneDao
 import com.komparo.helpfullinks.data.model.ScreenOne
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OneScreen(context : Context, database : AppDatabase, navController: NavController) {
@@ -87,6 +91,7 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
     val showIdDialog = remember { mutableStateOf(false) }
     val isLoading = remember { mutableStateOf(false) }
     val items = remember { mutableStateListOf<UrlData>() }
+    var toBeDeleted by rememberSaveable { mutableStateOf<ScreenOne?>(null) }
 
     Scaffold(
         bottomBar = {
@@ -115,11 +120,13 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                         confirmButton = {
                             Button(colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkblue)),
                                 onClick = {
-                                items.clear()
-                                texted.value = ""
-                                database.oneDao().deleteAll()
-                                    database.screenOneDao().deleteAll()
-                                navController.navigate("mainScreen")
+                                    scope.launch {
+                                        items.clear()
+                                        texted.value = ""
+                                        database.oneDao().deleteAll()
+                                        database.screenOneDao().deleteAll()
+                                        navController.navigate("mainScreen")
+                                    }
                                 showDialog.value = false
                             }) {
                                 Text("Да", color = colorResource(id = R.color.white))
@@ -272,6 +279,24 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                     Row( modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.End
                                     ){
+
+                                        Image(
+                                            painter = painterResource(id = R.drawable.sharp_delete_forever_two_24),
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .padding(end = 16.dp)
+                                                .clickable {
+                                                    scope.launch {
+                                                        toBeDeleted = database.screenOneDao().getAllLinks().firstOrNull { it.linktext == item.title &&
+                                                                it.linkimage == item.imageUrl && it.url == item.url }
+                                                        if (toBeDeleted != null) {
+                                                            showIdDialog.value = true
+                                                        }
+                                                    }
+                                                },
+                                            alignment = Alignment.CenterEnd
+                                        )
                                         if (showIdDialog.value) {
                                             AlertDialog(
                                                 onDismissRequest = {
@@ -283,9 +308,17 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                                 confirmButton = {
                                                     Button(colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.darkblue)),
                                                         onClick = {
-                                                            val screenOneItem = ScreenOne(linktext = item.title, linkimage = item.imageUrl, url = item.url, id = item.id)
-                                                            database.screenOneDao().deleteScreenOne(screenOneItem)
-                                                            items.remove(item)
+                                                            scope.launch {
+                                                                if (toBeDeleted != null) {
+                                                                    database.screenOneDao().deleteScreenOne(toBeDeleted!!)
+                                                                    val itemToRemove = items.firstOrNull { it.title == toBeDeleted!!.linktext &&
+                                                                            it.imageUrl == toBeDeleted!!.linkimage && it.url == toBeDeleted!!.url }
+                                                                    if (itemToRemove != null) {
+                                                                        items.remove(itemToRemove)
+                                                                    }
+                                                                    toBeDeleted = null
+                                                                }
+                                                            }
                                                             showIdDialog.value = false
                                                         }) {
                                                         Text("Да", color = colorResource(id = R.color.white))
@@ -301,17 +334,6 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                                 }
                                             )
                                         }
-                                        Image(
-                                            painter = painterResource(id = R.drawable.sharp_delete_forever_two_24),
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .size(40.dp)
-                                                .padding(end = 16.dp)
-                                                .clickable {
-                                                    showIdDialog.value = true
-                                                },
-                                            alignment = Alignment.CenterEnd
-                                        )
                                     }
                                     Card( modifier = Modifier
                                         .padding(
@@ -383,31 +405,30 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
     }
 }
 
-data class UrlData(val id : Int, val title: String, val imageUrl: String, val url: String)
+data class UrlData(val title: String, val imageUrl: String, val url: String)
 
-suspend fun fetchUrlData(database : AppDatabase, url: String): UrlData {
+ suspend fun fetchUrlData(database : AppDatabase, url: String): UrlData {
     var title = ""
     var imageUrl = ""
-    val id = 0
     return withContext(Dispatchers.IO) {
         try {
             val doc = Jsoup.connect(url).get()
-             title = doc.title()
-             imageUrl = doc.select("meta[property=og:image]").first()?.attr("content").toString()
-            UrlData(id, title, imageUrl ?: "", url)
+            title = doc.title()
+            imageUrl = doc.select("meta[property=og:image]").first()?.attr("content").toString()
+            UrlData(title, imageUrl ?: "", url)
         } catch (e: Exception) {
             e.printStackTrace()
             if (title.isNotEmpty()) {
                 val screenOne = ScreenOne(linkimage = imageUrl, linktext = title, url = title)
                 database.screenOneDao().insertScreenOne(screenOne)
             }
-            UrlData(id, title, imageUrl, url)
+            UrlData(title, imageUrl, url)
         }
     }
-}
-suspend fun getAllLinksAsUrlData(dao: ScreenOneDao): List<UrlData> {
+    }
+ suspend fun getAllLinksAsUrlData(dao: ScreenOneDao): List<UrlData> {
     return dao.getAllLinks().map { ScreenOne ->
-        UrlData(ScreenOne.id, ScreenOne.linktext, ScreenOne.linkimage, ScreenOne.url)
+        UrlData(ScreenOne.linktext, ScreenOne.linkimage, ScreenOne.url)
     }
 }
 
