@@ -46,7 +46,10 @@ fun NavGraphNavigate(database : AppDatabase, context: Context, navController: Na
     val imageId = remember { mutableStateOf(mapOf<Int, Int>()) }
     val screenTexts = remember { mutableStateOf(mapOf<String, String>()) }
 
-    NavHost(navController = navController, startDestination = "mainScreen"){
+    NavHost(navController = navController, startDestination = "SplashScreen"){
+        composable("SplashScreen"){
+            SplashScreen(navController)
+        }
         composable("mainScreen"){
             MainScreen(database, context, navController = navController, screenTexts = screenTexts, imageId = imageId)
         }
@@ -61,46 +64,46 @@ fun NavGraphNavigate(database : AppDatabase, context: Context, navController: Na
             OneScreen(context, database, navController)
         }
         composable("TwoScreen"){
-            TwoScreen(navController)
+            TwoScreen(context, database, navController)
         }
         composable("ThreeScreen"){
-            ThreeScreen(navController)
+            ThreeScreen(context, database, navController)
         }
         composable("FourScreen"){
-            FourScreen(navController)
+            FourScreen(context, database, navController)
         }
         composable("FiveScreen"){
-            FiveScreen(navController)
+            FiveScreen(context, database, navController)
         }
         composable("SixScreen"){
-            SixScreen(navController)
+            SixScreen(context, database, navController)
         }
         composable("SevenScreen"){
-            SevenScreen(navController)
+            SevenScreen(context, database, navController)
         }
         composable("EightScreen"){
-            EightScreen(navController)
+            EightScreen(context, database, navController)
         }
         composable("NineScreen"){
-            NineScreen(navController)
+            NineScreen(context, database, navController)
         }
         composable("TenScreen"){
-            TenScreen(navController)
+            TenScreen(context, database, navController)
         }
         composable("ElevenScreen"){
-            ElevenScreen(navController)
+            ElevenScreen(context, database, navController)
         }
         composable("TwelveScreen"){
-            TwelveScreen(navController)
+            TwelveScreen(context, database, navController)
         }
         composable("ThirteenScreen"){
-            ThirteenScreen(navController)
+            ThirteenScreen(context, database, navController)
         }
         composable("FourteenScreen"){
-            FourteenScreen(navController)
+            FourteenScreen(context, database, navController)
         }
         composable("FifteenScreen"){
-            FifteenScreen(navController)
+            FifteenScreen(context, database, navController)
         }
     }
 }
@@ -134,9 +137,12 @@ fun MainScreen(database : AppDatabase, context : Context, navController: NavCont
                 modifier = Modifier
                     .padding(start = 16.dp))
             Image(painter = painterResource(id = R.drawable.baseline_exit_to_app_24), contentDescription = null,
-                modifier = Modifier.size(50.dp).padding(end = 16.dp).clickable {
-                    (context as Activity).finishAffinity()
-                })
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(end = 16.dp)
+                    .clickable {
+                        (context as Activity).finishAffinity()
+                    })
         }
 
         LazyVerticalGrid(GridCells.Fixed(2), modifier = Modifier.padding(top = 64.dp)){

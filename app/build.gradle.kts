@@ -98,5 +98,6 @@ dependencies {
     implementation ("org.jsoup:jsoup:1.17.2")
 
     //Coil
-    implementation("io.coil-kt:coil-compose:1.4.0")
+    implementation ("io.coil-kt:coil-compose:2.1.0")
+    implementation ("io.coil-kt:coil-gif:2.1.0")
 }

@@ -21,6 +21,4 @@ interface ScreenOneDao {
     @Delete
     suspend fun deleteScreenOne(screenOne : ScreenOne)
 
-//    @Query("DELETE FROM ScreenOne WHERE id = :id")
-//    fun deleteScreenOneById(id: Int)
 }

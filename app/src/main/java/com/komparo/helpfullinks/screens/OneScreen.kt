@@ -5,9 +5,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.view.Window
-import android.view.inputmethod.InputMethodManager
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -38,7 +34,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -48,12 +43,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -74,7 +67,6 @@ import com.komparo.helpfullinks.R
 import com.komparo.helpfullinks.data.AppDatabase
 import com.komparo.helpfullinks.data.dao.ScreenOneDao
 import com.komparo.helpfullinks.data.model.ScreenOne
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -90,7 +82,7 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
     val showDialog = remember { mutableStateOf(false) }
     val showIdDialog = remember { mutableStateOf(false) }
     val isLoading = remember { mutableStateOf(false) }
-    val items = remember { mutableStateListOf<UrlData>() }
+    val items = remember { mutableStateListOf<UrlDataOne>() }
     var toBeDeleted by rememberSaveable { mutableStateOf<ScreenOne?>(null) }
 
     Scaffold(
@@ -172,7 +164,7 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                             if (texted.value.isNotEmpty()) {
                                 scope.launch {
                                     isLoading.value = true
-                                    val urlsData = fetchUrlData(database, texted.value)
+                                    val urlsData = fetchUrlDataOne(database, texted.value)
                                     database
                                         .screenOneDao()
                                         .insertScreenOne(
@@ -228,7 +220,7 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
 
                 LaunchedEffect(Unit) {
                     scope.launch {
-                        items.addAll(getAllLinksAsUrlData(database.screenOneDao()))
+                        items.addAll(getAllLinksAsUrlDataOne(database.screenOneDao()))
                     }
                 }
                 LazyColumn(modifier = Modifier.padding(top = 8.dp, bottom = 72.dp), state = listState) {
@@ -405,9 +397,9 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
     }
 }
 
-data class UrlData(val title: String, val imageUrl: String, val url: String)
+data class UrlDataOne(val title: String, val imageUrl: String, val url: String)
 
- suspend fun fetchUrlData(database : AppDatabase, url: String): UrlData {
+ suspend fun fetchUrlDataOne(database : AppDatabase, url: String): UrlDataOne {
     var title = ""
     var imageUrl = ""
     return withContext(Dispatchers.IO) {
@@ -415,20 +407,20 @@ data class UrlData(val title: String, val imageUrl: String, val url: String)
             val doc = Jsoup.connect(url).get()
             title = doc.title()
             imageUrl = doc.select("meta[property=og:image]").first()?.attr("content").toString()
-            UrlData(title, imageUrl ?: "", url)
+            UrlDataOne(title, imageUrl ?: "", url)
         } catch (e: Exception) {
             e.printStackTrace()
             if (title.isNotEmpty()) {
                 val screenOne = ScreenOne(linkimage = imageUrl, linktext = title, url = title)
                 database.screenOneDao().insertScreenOne(screenOne)
             }
-            UrlData(title, imageUrl, url)
+            UrlDataOne(title, imageUrl, url)
         }
     }
     }
- suspend fun getAllLinksAsUrlData(dao: ScreenOneDao): List<UrlData> {
+ suspend fun getAllLinksAsUrlDataOne(dao: ScreenOneDao): List<UrlDataOne> {
     return dao.getAllLinks().map { ScreenOne ->
-        UrlData(ScreenOne.linktext, ScreenOne.linkimage, ScreenOne.url)
+        UrlDataOne(ScreenOne.linktext, ScreenOne.linkimage, ScreenOne.url)
     }
 }
 
