@@ -1,7 +1,10 @@
 package com.komparo.helpfullinks.screens
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +12,8 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,6 +66,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ShareCompat
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.komparo.helpfullinks.R
@@ -68,6 +74,7 @@ import com.komparo.helpfullinks.data.AppDatabase
 import com.komparo.helpfullinks.data.dao.ScreenOneDao
 import com.komparo.helpfullinks.data.model.ScreenOne
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
@@ -84,6 +91,8 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
     val isLoading = remember { mutableStateOf(false) }
     val items = remember { mutableStateListOf<UrlDataOne>() }
     var toBeDeleted by rememberSaveable { mutableStateOf<ScreenOne?>(null) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed = interactionSource.collectIsPressedAsState().value
 
     Scaffold(
         bottomBar = {
@@ -280,8 +289,13 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                                 .padding(end = 16.dp)
                                                 .clickable {
                                                     scope.launch {
-                                                        toBeDeleted = database.screenOneDao().getAllLinks().firstOrNull { it.linktext == item.title &&
-                                                                it.linkimage == item.imageUrl && it.url == item.url }
+                                                        toBeDeleted = database
+                                                            .screenOneDao()
+                                                            .getAllLinks()
+                                                            .firstOrNull {
+                                                                it.linktext == item.title &&
+                                                                        it.linkimage == item.imageUrl && it.url == item.url
+                                                            }
                                                         if (toBeDeleted != null) {
                                                             showIdDialog.value = true
                                                         }
@@ -382,9 +396,48 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                             modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 8.dp, bottom = 8.dp)
                                         )
                                     }
-                                    Text(text = item.url, modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp), fontSize = 14.sp, color = colorResource(
-                                        id = R.color.darkblue
-                                    ), fontWeight = FontWeight.Bold)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(end = 16.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        if (isPressed) {
+                                            scope.launch(Dispatchers.IO) {
+                                                delay(1000)
+                                                if (isPressed) {
+                                                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                                    val clip = ClipData.newPlainText("Copied Text", item.url)
+                                                    clipboard.setPrimaryClip(clip)
+                                                    withContext(Dispatchers.Main){
+                                                        Toast.makeText(context, "Ссылка скопирована в буфер обмена!", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = item.url,
+                                                modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp).clickable (
+                                                    interactionSource = interactionSource,
+                                                    indication = null,
+                                                    onClick = {}
+                                                ),
+                                                fontSize = 14.sp,
+                                                color = colorResource(id = R.color.darkblue),
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                        Image(
+                                            painter = painterResource(id = R.drawable.baseline_share_24),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(30.dp).clickable {
+                                                val shareIntent = ShareCompat.IntentBuilder.from(context as Activity)
+                                                    .setType("text/plain")
+                                                    .setText(item.url)
+                                                    .intent
+                                                context.startActivity(Intent.createChooser(shareIntent, null))
+                                            }
+                                        )
+                                    }
 
                                 }
                             }
