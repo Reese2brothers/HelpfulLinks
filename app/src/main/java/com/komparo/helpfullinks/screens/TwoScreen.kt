@@ -426,7 +426,7 @@ fun TwoScreen(context : Context, database : AppDatabase, navController: NavHostC
                                         Image(
                                             painter = painterResource(id = R.drawable.baseline_share_24),
                                             contentDescription = null,
-                                            modifier = Modifier.size(30.dp).clickable {
+                                            modifier = Modifier.size(30.dp).padding(bottom = 8.dp).clickable {
                                                 val shareIntent = ShareCompat.IntentBuilder.from(context as Activity)
                                                     .setType("text/plain")
                                                     .setText(item.url)
