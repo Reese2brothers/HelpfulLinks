@@ -3,6 +3,9 @@ package com.komparo.helpfullinks.screens
 import android.app.Activity
 import android.content.Context
 import android.view.Window
+import android.widget.Toast
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,10 +19,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -114,6 +120,12 @@ fun MainScreen(database : AppDatabase, context : Context, navController: NavCont
     val screens = listOf("OneScreen", "TwoScreen", "ThreeScreen", "FourScreen", "FiveScreen",
         "SixScreen", "SevenScreen", "EightScreen", "NineScreen", "TenScreen", "ElevenScreen",
         "TwelveScreen", "ThirteenScreen", "FourteenScreen", "FifteenScreen")
+    val scrollState = rememberLazyGridState()
+    BackHandler {
+        Toast.makeText(context, "Вы вышли из приложения!", Toast.LENGTH_SHORT).show()
+        (context as Activity).finishAffinity()
+    }
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(
@@ -144,8 +156,7 @@ fun MainScreen(database : AppDatabase, context : Context, navController: NavCont
                         (context as Activity).finishAffinity()
                     })
         }
-
-        LazyVerticalGrid(GridCells.Fixed(2), modifier = Modifier.padding(top = 64.dp)){
+        LazyVerticalGrid(GridCells.Fixed(2), state = scrollState, modifier = Modifier.padding(top = 64.dp)){
             items(15) { screen ->
             val title = when (screen) {
                 0 -> {

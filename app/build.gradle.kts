@@ -75,6 +75,7 @@ dependencies {
     //Compose navigation
     debugImplementation("androidx.navigation:navigation-compose:2.7.7")
     debugImplementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-compose:2.8.0-alpha07")
 
     //Room
     implementation ("androidx.room:room-runtime:2.6.1")
