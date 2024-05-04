@@ -7,6 +7,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -170,31 +172,37 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                     modifier = Modifier
                         .size(40.dp)
                         .clickable {
-                            if (texted.value.isNotEmpty()) {
-                                scope.launch {
-                                    isLoading.value = true
-                                    val urlsData = fetchUrlDataOne(database, texted.value)
-                                    database
-                                        .screenOneDao()
-                                        .insertScreenOne(
-                                            ScreenOne(
-                                                linktext = urlsData.title,
-                                                linkimage = urlsData.imageUrl,
-                                                url = urlsData.url
+                            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+                            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
+                                if (texted.value.isNotEmpty()) {
+                                    scope.launch {
+                                        isLoading.value = true
+                                        val urlsData = fetchUrlDataOne(database, texted.value)
+                                        database
+                                            .screenOneDao()
+                                            .insertScreenOne(
+                                                ScreenOne(
+                                                    linktext = urlsData.title,
+                                                    linkimage = urlsData.imageUrl,
+                                                    url = urlsData.url
+                                                )
                                             )
+                                        items.add(items.size, urlsData)
+                                        listState.animateScrollToItem(index = items.size)
+                                        isLoading.value = false
+                                    }
+                                } else {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Нет ничего для сохранения!",
+                                            Toast.LENGTH_SHORT
                                         )
-                                    items.add(items.size, urlsData)
-                                    listState.animateScrollToItem(index = items.size)
-                                    isLoading.value = false
+                                        .show()
                                 }
                             } else {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Нет ничего для сохранения!",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
+                                Toast.makeText(context, "Проверьте соединение с интернетом!", Toast.LENGTH_SHORT).show()
                             }
                         })
                     }
@@ -397,8 +405,11 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                         )
                                     }
                                     Row(
-                                        modifier = Modifier.fillMaxWidth().padding(end = 16.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(end = 8.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.Bottom
                                     ) {
                                         if (isPressed) {
                                             scope.launch(Dispatchers.IO) {
@@ -416,34 +427,43 @@ fun OneScreen(context : Context, database : AppDatabase, navController: NavContr
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
                                                 text = item.url,
-                                                modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp).clickable (
-                                                    interactionSource = interactionSource,
-                                                    indication = null,
-                                                    onClick = {}
-                                                ),
+                                                modifier = Modifier
+                                                    .padding(
+                                                        start = 16.dp,
+                                                        top = 8.dp,
+                                                        bottom = 8.dp
+                                                    )
+                                                    .clickable(
+                                                        interactionSource = interactionSource,
+                                                        indication = null,
+                                                        onClick = {}
+                                                    ),
                                                 fontSize = 14.sp,
                                                 color = colorResource(id = R.color.darkblue),
                                                 fontWeight = FontWeight.Bold
                                             )
                                         }
-                                        Image(
-                                            painter = painterResource(id = R.drawable.baseline_share_24),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(30.dp).padding(bottom = 8.dp).clickable {
-                                                val shareIntent = ShareCompat.IntentBuilder.from(context as Activity)
-                                                    .setType("text/plain")
-                                                    .setText(item.url)
-                                                    .intent
-                                                context.startActivity(Intent.createChooser(shareIntent, null))
-                                            }
-                                        )
+                                        Column(
+                                            verticalArrangement = Arrangement.Bottom,
+                                            horizontalAlignment = Alignment.End,
+                                            modifier = Modifier.fillMaxHeight()
+                                        ) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.baseline_share_24),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(40.dp).padding(bottom = 10.dp).clickable {
+                                                    val shareIntent = ShareCompat.IntentBuilder.from(context as Activity).setType("text/plain")
+                                                        .setText(item.url)
+                                                        .intent
+                                                    context.startActivity(Intent.createChooser(shareIntent, null))
+                                                }
+                                            )
+                                        }
                                     }
-
                                 }
                             }
                         }
                     }
-
                 }
             }
         }

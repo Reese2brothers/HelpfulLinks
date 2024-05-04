@@ -7,6 +7,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -172,6 +174,9 @@ fun TwoScreen(context : Context, database : AppDatabase, navController: NavHostC
                     modifier = Modifier
                         .size(40.dp)
                         .clickable {
+                            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+                            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
                             if (texted.value.isNotEmpty()) {
                                 scope.launch {
                                     isLoading.value = true
@@ -194,6 +199,15 @@ fun TwoScreen(context : Context, database : AppDatabase, navController: NavHostC
                                     .makeText(
                                         context,
                                         "Нет ничего для сохранения!",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                            }
+                            } else {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Проверьте соединение с интернетом!",
                                         Toast.LENGTH_SHORT
                                     )
                                     .show()
@@ -394,8 +408,9 @@ fun TwoScreen(context : Context, database : AppDatabase, navController: NavHostC
                                         )
                                     }
                                     Row(
-                                        modifier = Modifier.fillMaxWidth().padding(end = 16.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                        modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.Bottom
                                     ) {
                                         if (isPressed) {
                                             scope.launch(Dispatchers.IO) {
@@ -423,17 +438,22 @@ fun TwoScreen(context : Context, database : AppDatabase, navController: NavHostC
                                                 fontWeight = FontWeight.Bold
                                             )
                                         }
-                                        Image(
-                                            painter = painterResource(id = R.drawable.baseline_share_24),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(30.dp).padding(bottom = 8.dp).clickable {
-                                                val shareIntent = ShareCompat.IntentBuilder.from(context as Activity)
-                                                    .setType("text/plain")
-                                                    .setText(item.url)
-                                                    .intent
-                                                context.startActivity(Intent.createChooser(shareIntent, null))
-                                            }
-                                        )
+                                        Column(
+                                            verticalArrangement = Arrangement.Bottom,
+                                            horizontalAlignment = Alignment.End,
+                                            modifier = Modifier.fillMaxHeight()
+                                        ) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.baseline_share_24),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(40.dp).padding(bottom = 10.dp).clickable {
+                                                    val shareIntent = ShareCompat.IntentBuilder.from(context as Activity).setType("text/plain")
+                                                        .setText(item.url)
+                                                        .intent
+                                                    context.startActivity(Intent.createChooser(shareIntent, null))
+                                                }
+                                            )
+                                        }
                                     }
 
                                 }
